@@ -20,7 +20,9 @@ See https://github.com/openvinotoolkit/openvino/blob/master/docs/dev/build_windo
 
 > NOTE: This example assumes that you have not cloned OpenVINO and OpenVINO GenAI yet. If you already cloned them, run `git pull` and `git submodule update --init --recursive` for both repositories. The `cmake` command below assumes that `openvino` and `openvino.genai` are both cloned in the same parent directory. If that is not the case, adjust the path for `-DOPENVINO_EXTRA_MODULES` to the path to your `openvino.genai` repository.
 
-```sh
+> NOTE: if you're running into issues, you may want to set an absolute path to openvino.genai as argument to `-DOPENVINO_EXTRA_MODULES` in the `cmake` command below.
+
+```shell
 git clone --recursive https://github.com/openvinotoolkit/openvino.genai.git
 git clone --recursive https://github.com/openvinotoolkit/openvino.git
 cd openvino
@@ -34,7 +36,8 @@ cmake --install . --prefix %USERPROFILE%\tools\openvino
 
 Run `%USERPROFILE%\tools\openvino\setupvars.bat` (setupvars.ps1 for PowerShell) and compile your application
 
-> [!NOTE] If you want to use Python with OpenVINO GenAI, set `-DENABLE_PYTHON=ON` when running cmake and run `pip install --no-deps openvino-tokenizers numpy`. OpenVINO Tokenizers needs to be the same version as OpenVINO, so if you're not building from a release tag, use `pip install --pre --no-deps --upgrade openvino-tokenizers --extra-index-url https://storage.openvinotoolkit.org/simple/wheels/nightly` and specify a version (i.e. `openvino-tokenizers==2025.0.*` if needed). Note the `no-deps` in the pip install commands! It is recommended to create a clean virtual environment to install these dependencies.
+> [!NOTE]
+> If you want to use your build with Python and use OpenVINO GenAI, set `-DENABLE_PYTHON=ON` when running cmake and run `pip install --no-deps openvino-tokenizers numpy`. OpenVINO Tokenizers needs to be the same version as OpenVINO, so if you're not building from a release tag, use `pip install --pre --no-deps --upgrade openvino-tokenizers --extra-index-url https://storage.openvinotoolkit.org/simple/wheels/nightly` and specify a version (i.e. `openvino-tokenizers==2025.0.*` if needed). Note the `no-deps` in the pip install commands! It is recommended to create a clean virtual environment to install these dependencies.
 
 
 ## Linux
@@ -44,7 +47,7 @@ See https://github.com/openvinotoolkit/openvino/blob/master/docs/dev/build_linux
 ### System requirements
 
 - [CMake](https://cmake.org/download/) 3.23 or higher
-- GCC 7.5 or higher to build OpenVINO Runtime
+- GCC 7.5 or higher
 - Git
 
 ### Build OpenVINO
@@ -55,7 +58,7 @@ See https://github.com/openvinotoolkit/openvino/blob/master/docs/dev/build_linux
 
 > NOTE: This example assumes that you have not cloned OpenVINO and OpenVINO GenAI yet. If you already cloned them, run `git pull` and `git submodule update --init --recursive` for both repositories. The `cmake` command below assumes that `openvino` and `openvino.genai` are both cloned in the same parent directory. If that is not the case, adjust the path for `-DOPENVINO_EXTRA_MODULES` to the path to your `openvino.genai` repository.
 
-```sh
+```shell
 git clone --recursive https://github.com/openvinotoolkit/openvino.genai.git
 git clone --recursive https://github.com/openvinotoolkit/openvino.git
 cd openvino
@@ -70,4 +73,5 @@ cmake --install . --prefix $HOME/tools/openvino
 
 Run `source $HOME/tools/openvino/setupvars.sh` and compile your application
 
-> [!NOTE] If you want to use Python with OpenVINO GenAI, set `-DENABLE_PYTHON=ON` when running cmake and run `pip install --no-deps openvino-tokenizers numpy`. OpenVINO Tokenizers needs to be the same version as OpenVINO, so if you're not building from a release tag, use `pip install --pre --no-deps --upgrade openvino-tokenizers --extra-index-url https://storage.openvinotoolkit.org/simple/wheels/nightly` and specify a version (i.e. `openvino-tokenizers==2025.0.*` if needed). Note the `no-deps` in the pip install commands! It is recommended to create a clean virtual environment to install these dependencies.
+> [!NOTE]
+> If you want to use your build with Python and use OpenVINO GenAI, set `-DENABLE_PYTHON=ON` when running cmake and run `pip install --no-deps openvino-tokenizers numpy`. OpenVINO Tokenizers needs to be the same version as OpenVINO, so if you're not building from a release tag, use `pip install --pre --no-deps --upgrade openvino-tokenizers --extra-index-url https://storage.openvinotoolkit.org/simple/wheels/nightly` and specify a version (i.e. `openvino-tokenizers==2025.0.*` if needed). Note the `no-deps` in the pip install commands! It is recommended to create a clean virtual environment to install these dependencies.
