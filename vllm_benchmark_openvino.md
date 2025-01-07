@@ -5,7 +5,10 @@
 
 In short:
 
+
 ```
+git clone https://github.com/vllm-project/vllm
+cd vllm
 python3 -m venv vllm_env
 source vllm_env/bin/activate
 pip install --upgrade pip
@@ -17,13 +20,10 @@ See https://github.com/vllm-project/vllm/blob/main/docs/source/getting_started/i
 
 ## Serve
 
-Set `VLLM_OPENVINO_KVCACHE_SPACE` to the amount of memory to use. 100 is recommended on a server with enough memory.
-
-> ![NOTE]
-> Relative paths to the model file are not recommended. 
+Set `VLLM_OPENVINO_KVCACHE_SPACE` to the amount of memory to use. 100 is recommended on a server with enough memory. See https://github.com/vllm-project/vllm/blob/main/docs/source/getting_started/installation/openvino.md about BKMs
 
 ```
-VLLM_OPENVINO_KVCACHE_SPACE=100 vllm serve /path/to/model
+VLLM_OPENVINO_KVCACHE_SPACE=100 VLLM_OPENVINO_CPU_KV_CACHE_PRECISION=u8 vllm serve /path/to/model
 ```
 
 ## Benchmark
@@ -43,7 +43,7 @@ In a different terminal, after starting the model server with the command above,
 python benchmark_serving.py --model /path/to/model --dataset-path /path/to/ShareGPT_V3_unfiltered_cleaned_split.json --num-prompts 500
 ```
 
-Adjust num-prompts to your preference. See `python benchmark_serving.py -h` for all arguments. See https://github.com/vllm-project/vllm/blob/main/docs/source/getting_started/installation/openvino.md about BKMs
+Adjust num-prompts to your preference. See `python benchmark_serving.py -h` for all arguments.
 
-> ![NOTE]
+> [!NOTE]
 > Make sure to use the exact same model path syntax for the `serve` and the `benchmark_serving.py` steps. Do not use `/home/user` in one and `$HOME` in the other, do not have one model end with a slash and not the other. The arguments should be exactly the same.
