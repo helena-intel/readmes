@@ -15,7 +15,7 @@ See https://github.com/openvinotoolkit/openvino/blob/master/docs/dev/build_windo
 ### Build OpenVINO
 
 - OpenVINO will be installed in `C:\Users\UserName\tools\openvino`. Modify the `--prefix` argument in the `--install` line to change that.
-- We build a very minimal OpenVINO build, disabling among others AUTO, Python and NPU support. To enable Python, remove `-DENABLE_PYTHON=OFF`, to enable NPU support remove `-DENABLE_INTEL_NPU=OFF` etc. See [CMake options for custom compilation] for an overview of options. (https://github.com/openvinotoolkit/openvino/blob/master/docs/dev/cmake_options_for_custom_compilation.md)
+- We build a very minimal OpenVINO build, disabling among others AUTO, Python and NPU support. To enable NPU support remove `-DENABLE_INTEL_NPU=OFF` etc. See [CMake options for custom compilation] for an overview of options. (https://github.com/openvinotoolkit/openvino/blob/master/docs/dev/cmake_options_for_custom_compilation.md)
 - To prevent potential environment conflicts, it is recommended to open a new Developer Command Prompt to run these steps.
 
 > NOTE: This example assumes that you have not cloned OpenVINO and OpenVINO GenAI yet. If you already cloned them, run `git pull` and `git submodule update --init --recursive` for both repositories. The `cmake` command below assumes that `openvino` and `openvino.genai` are both cloned in the same parent directory. If that is not the case, adjust the path for `-DOPENVINO_EXTRA_MODULES` to the path to your `openvino.genai` repository.
@@ -37,8 +37,7 @@ cmake --install . --prefix %USERPROFILE%\tools\openvino
 Run `%USERPROFILE%\tools\openvino\setupvars.bat` (setupvars.ps1 for PowerShell) and compile your application
 
 > [!NOTE]
-> If you want to use your build with Python and use OpenVINO GenAI, set `-DENABLE_PYTHON=ON` when running cmake and run `pip install --no-deps openvino-tokenizers numpy`. OpenVINO Tokenizers needs to be the same version as OpenVINO, so if you're not building from a release tag, use `pip install --pre --no-deps --upgrade openvino-tokenizers --extra-index-url https://storage.openvinotoolkit.org/simple/wheels/nightly` and specify a version (i.e. `openvino-tokenizers==2025.0.*` if needed). Note the `no-deps` in the pip install commands! It is recommended to create a clean virtual environment to install these dependencies.
-
+> See the Tips section at the bottom of this document if you want to enable Python in your build.
 
 ## Linux
 
@@ -53,7 +52,7 @@ See https://github.com/openvinotoolkit/openvino/blob/master/docs/dev/build_linux
 ### Build OpenVINO
 
 - OpenVINO will be installed in `$HOME/tools/openvino`. Modify the `--prefix` argument in the `--install` line to change that.
-- We build a very minimal OpenVINO build, disabling among others AUTO, Python and NPU support. GPU support is enabled in the build, provided GPU drivers are installed. To enable Python, remove `-DENABLE_PYTHON=OFF`, to enable NPU support remove `-DENABLE_INTEL_NPU=OFF` etc. See [CMake options for custom compilation] for an overview of options. (https://github.com/openvinotoolkit/openvino/blob/master/docs/dev/cmake_options_for_custom_compilation.md)
+- We build a very minimal OpenVINO build, disabling among others AUTO, Python and NPU support. GPU support is enabled in the build, provided GPU drivers are installed. To enable NPU support remove `-DENABLE_INTEL_NPU=OFF` etc. See [CMake options for custom compilation] for an overview of options. (https://github.com/openvinotoolkit/openvino/blob/master/docs/dev/cmake_options_for_custom_compilation.md)
 - To prevent potential environment conflicts (for example from a Python virtual environment, or from previously ran setupvars), it is recommended to open a new terminal to run these steps.
 
 > NOTE: This example assumes that you have not cloned OpenVINO and OpenVINO GenAI yet. If you already cloned them, run `git pull` and `git submodule update --init --recursive` for both repositories. The `cmake` command below assumes that `openvino` and `openvino.genai` are both cloned in the same parent directory. If that is not the case, adjust the path for `-DOPENVINO_EXTRA_MODULES` to the path to your `openvino.genai` repository.
@@ -73,5 +72,16 @@ cmake --install . --prefix $HOME/tools/openvino
 
 Run `source $HOME/tools/openvino/setupvars.sh` and compile your application
 
-> [!NOTE]
-> If you want to use your build with Python and use OpenVINO GenAI, set `-DENABLE_PYTHON=ON` when running cmake and run `pip install --no-deps openvino-tokenizers numpy`. OpenVINO Tokenizers needs to be the same version as OpenVINO, so if you're not building from a release tag, use `pip install --pre --no-deps --upgrade openvino-tokenizers --extra-index-url https://storage.openvinotoolkit.org/simple/wheels/nightly` and specify a version (i.e. `openvino-tokenizers==2025.0.*` if needed). Note the `no-deps` in the pip install commands! It is recommended to create a clean virtual environment to install these dependencies.
+## Tips
+
+### Enable Python
+
+- Install the requirements for Python. From the parent directory of openvino/openvino.genai:
+
+```sh
+pip install -r openvino.genai/requirements-build.txt
+pip install -r openvino/src/bindings/python/wheel/requirements-dev.txt
+```
+
+-  set `-DENABLE_PYTHON=ON` when running cmake. Sometimes CMake can't find the correct Python, then you can set the Python executable to be used, for example: `-DPython3_EXECUTABLE=/usr/local/bin/python3.12` 
+- run `pip install --no-deps openvino-tokenizers numpy` in your inference environment. OpenVINO Tokenizers needs to be the same version as OpenVINO, so if you're not building from a release tag, use `pip install --pre --no-deps --upgrade openvino-tokenizers --extra-index-url https://storage.openvinotoolkit.org/simple/wheels/nightly` and specify a version (i.e. `openvino-tokenizers==2025.0.*`) if needed. Note the `no-deps` in the pip install commands! It is recommended to create a clean virtual environment to install these dependencies.
