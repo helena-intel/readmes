@@ -1,0 +1,80 @@
+# Export Hugging Face models for OpenVINO NPU inference
+
+## Prerequisites
+
+- Update NPU driver to latest version from https://www.intel.com/content/www/us/en/download/794734/intel-npu-driver-windows.html
+- Install Git from https://git-scm.com/downloads/win and select the option to make git available outside of Git Bash.
+- Create and activate a new Python virtual environment. See https://github.com/helena-intel/readmes/blob/main/create_venv.md.
+
+> [!NOTE]
+> Do not use a nightly release of OpenVINO. Use OpenVINO 2024.6. `pip install openvino-genai==2024.6` will downgrade OpenVINO/OpenVINO GenAI to 2024.6 if you already had 2025.0 nightly installed.
+
+## Install Optimum Intel
+
+Optimum Intel is used for model conversion/export.
+
+```
+python -m pip install --upgrade "optimum-intel[openvino]"@git+https://github.com/huggingface/optimum-intel.git
+```
+
+## Convert the model to OpenVINO. 
+
+In this example we use the model meta-llama/Llama-3.2-1B-Instruct . To use another model, replace that with the model_id on https://huggingface.co 
+
+```
+optimum-cli export openvino --sym --weight-format int4 --awq --dataset wikitext2 -m meta-llama/Llama-3.2-1B-Instruct Llama-3.2-1B-Instruct-ov-int4-sym
+```
+
+To export a model with more than 4B parameters, use `--group-size -1`:
+
+```
+optimum-cli export openvino --sym --weight-format int4 --group-size -1 --awq --dataset wikitext2 -m meta-llama/Llama-3.1-8B-Instruct meta-llama/Llama-3.1-8B-Instruct-ov-int4-sym
+```
+
+See `optimum-cli export openvino --help` for all options. Using `--scale-estimation` could improve accuracy - but it takes quite a lot of time to export the model. 
+Using `--all-layers` can improve performance, but can also possibly reduce model output quality. Do not change `--sym`, `--weight-format` and do not set `--ratio` to anything other than 1 (the default).
+
+
+## Download llm_chat.py script
+
+This script automatically sets a system prompt, and enables model caching for NPU.
+
+```
+curl -O https://raw.githubusercontent.com/helena-intel/snippets/refs/heads/main/llm_chat/python/llm_chat.py
+```
+
+> [!NOTE]
+> `curl` works differently in PowerShell. This `curl` command works in Command Prompt
+
+## Run inference
+
+```
+python llm_chat.py Llama-3.2-1B-Instruct-ov-int4-sym NPU
+```
+
+The first time you run this it may take quite some time to compile the model to NPU. This will be much faster the next times, when the model will be loaded from cache.
+
+### Tips
+
+- Edit the script to change the system prompt to tweak model outputs
+- Only greedy search is supported on NPU. Do not change `do_sample=False` in the script. Setting `temperature` and `top_p` has no effect.
+- By default the NPU pipeline supports an input size of up-to 1024 tokens. To
+  increase that limit, for example to 2048, add `{"MAX_PROMPT_LEN": 2048}` to
+`pipeline_config`
+- To speed up inference at the cost of slower model loading/compilation time, add `{"GENERATE_HINT": "BEST_PERF" }` to `pipeline_config`
+
+## Supported models
+
+These models have been tested and are officially supported with NPU:
+
+- meta-llama/Meta-Llama-3-8B-Instruct
+- meta-llama/Llama-3.1-8B
+- microsoft/Phi-3-mini-4k-instruct
+- Qwen/Qwen2-7B
+- mistralai/Mistral-7B-Instruct-v0.2
+- openbmb/MiniCPM-1B-sft-bf16
+- TinyLlama/TinyLlama-1.1B-Chat-v1.0
+- TheBloke/Llama-2-7B-Chat-GPTQ
+- Qwen/Qwen2-7B-Instruct-GPTQ-Int4
+
+Similar models are expected to work too.
