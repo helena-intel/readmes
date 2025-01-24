@@ -1,5 +1,7 @@
 # Export Hugging Face models for OpenVINO NPU inference
 
+This guide is for now focused on Windows, but the process is the same for Linux.
+
 ## Prerequisites
 
 - Update NPU driver to latest version from https://www.intel.com/content/www/us/en/download/794734/intel-npu-driver-windows.html
@@ -32,8 +34,7 @@ optimum-cli export openvino --sym --weight-format int4 --group-size -1 --awq --d
 ```
 
 See `optimum-cli export openvino --help` for all options. Using `--scale-estimation` could improve accuracy - but it takes quite a lot of time to export the model. 
-Using `--all-layers` can improve performance, but can also possibly reduce model output quality. Do not change `--sym`, `--weight-format` and do not set `--ratio` to anything other than 1 (the default).
-
+Using `--all-layers` can improve performance, but can also possibly reduce model output quality. For NPU-friendly models, do not change `--sym`, `--weight-format` and do not set `--ratio` to anything other than 1 (the default).
 
 ## Download llm_chat.py script
 
@@ -62,6 +63,16 @@ The first time you run this it may take quite some time to compile the model to 
   increase that limit, for example to 2048, add `{"MAX_PROMPT_LEN": 2048}` to
 `pipeline_config`
 - To speed up inference at the cost of slower model loading/compilation time, add `{"GENERATE_HINT": "BEST_PERF" }` to `pipeline_config`
+
+### Troubleshooting
+
+#### Cannot access gated repo
+
+- If you try to export a "gated" model, for which you need to agree to terms to get access, you will get an error when running `optimum-cli`. Assuming you do have access to the model:
+  - go to https://huggingface.co/settings/tokens and generate a token (can be a read token, or a fine-grained token with read access to the models you have access to)
+  - type `huggingface-cli login` in the command prompt (with the environment where you run `optimum-cli` activated), and paste the token. The token will not be visible in the command prompt, so just press Enter after pasting. You will then be asked if the token should be added as a Git credential. Git credentials are not needed for this process, so you can answer `N` to that question.
+
+You only need to run `huggingface-cli` once, your token will be saved. If you ever want to know if you are logged in, run `huggingface-cli whoami`. 
 
 ## Supported models
 
