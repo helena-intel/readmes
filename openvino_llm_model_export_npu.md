@@ -6,17 +6,21 @@ This guide is for now focused on Windows, but the process is the same for Linux.
 
 - Update NPU driver to latest version from https://www.intel.com/content/www/us/en/download/794734/intel-npu-driver-windows.html
 - Install Git from https://git-scm.com/downloads/win and select the option to make git available outside of Git Bash.
-- Create and activate a new Python virtual environment. See https://github.com/helena-intel/readmes/blob/main/create_venv.md.
+- Python 3.8-3.12 from https://www.python.org/downloads/windows/
+- OpenVINO version should be 2024.6 or later.
 
-> [!NOTE]
-> Do not use a nightly release of OpenVINO. Use OpenVINO 2024.6. `pip install openvino-genai==2024.6` will downgrade OpenVINO/OpenVINO GenAI to 2024.6 if you already had 2025.0 nightly installed.
-
+ 
 ## Install Optimum Intel
 
 Optimum Intel is used for model conversion/export.
 
+It is recommended to [create a new virtual environment]((https://github.com/helena-intel/readmes/blob/main/create_venv.md) to install the dependencies:
+
 ```
-python -m pip install --upgrade "optimum-intel[openvino]"@git+https://github.com/huggingface/optimum-intel.git
+python -m venv venv
+venv\Scripts\activate
+pip install --upgrade pip
+python -m pip install "optimum-intel[openvino]"@git+https://github.com/huggingface/optimum-intel.git
 ```
 
 ## Convert the model to OpenVINO. 
@@ -58,11 +62,14 @@ The first time you run this it may take quite some time to compile the model to 
 ### Tips
 
 - Edit the script to change the system prompt to tweak model outputs
-- Only greedy search is supported on NPU. Do not change `do_sample=False` in the script. Setting `temperature` and `top_p` has no effect.
-- By default the NPU pipeline supports an input size of up-to 1024 tokens. To
-  increase that limit, for example to 2048, add `{"MAX_PROMPT_LEN": 2048}` to
+- In OpenVINO 2024.6, only greedy search is supported on NPU. Do not change `do_sample=False` in the script. Setting `temperature` and `top_p` has no effect. In OpenVINO 2025.0 sample search will be supported on NPU too.
+- By default the NPU pipeline supports an input size of up-to 1024 tokens. To increase that limit, for example to 2048, add `{"MAX_PROMPT_LEN": 2048}` to
 `pipeline_config`
 - To speed up inference at the cost of slower model loading/compilation time, add `{"GENERATE_HINT": "BEST_PERF" }` to `pipeline_config`
+
+### C++ 
+
+See [this sample](https://github.com/helena-intel/snippets/tree/main/llm_chat/cpp) for a C++ version of the chatbot.
 
 ### Troubleshooting
 
