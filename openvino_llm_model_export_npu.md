@@ -66,6 +66,7 @@ The first time you run this it may take quite some time to compile the model to 
 - By default the NPU pipeline supports an input size of up-to 1024 tokens. To increase that limit, for example to 2048, add `{"MAX_PROMPT_LEN": 2048}` to
 `pipeline_config`
 - To speed up inference at the cost of slower model loading/compilation time, add `{"GENERATE_HINT": "BEST_PERF" }` to `pipeline_config`
+- The llm_chat.py script works with chat models. These models usually have for example -instruct or -chat in their name. For non-chat models, or if you get an error about chat templates, try https://raw.githubusercontent.com/helena-intel/snippets/refs/heads/main/llm_chat/python/llm_test.py instead. Do not expect chat quality from this - but it does allow you to test the model.
 
 ### C++ 
 
