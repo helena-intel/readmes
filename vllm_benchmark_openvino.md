@@ -16,11 +16,11 @@ pip install -r requirements-build.txt --extra-index-url https://download.pytorch
 PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cpu" VLLM_TARGET_DEVICE=openvino python -m pip install -v .
 ```
 
-See https://github.com/vllm-project/vllm/blob/main/docs/source/getting_started/installation/openvino.md for full instructions
+See https://github.com/vllm-project/vllm/blob/main/docs/source/getting_started/installation/ai_accelerator/openvino.inc.md for full instructions
 
 ## Serve
 
-Set `VLLM_OPENVINO_KVCACHE_SPACE` to the amount of memory to use. 100 is recommended on a server with enough memory. See https://github.com/vllm-project/vllm/blob/main/docs/source/getting_started/installation/openvino.md about BKMs
+Set `VLLM_OPENVINO_KVCACHE_SPACE` to the amount of memory to use. 100 is recommended on a server with enough memory. See https://github.com/vllm-project/vllm/blob/main/docs/source/getting_started/installation/ai_accelerator/openvino.inc.md about BKMs
 
 ```
 VLLM_OPENVINO_KVCACHE_SPACE=100 VLLM_OPENVINO_CPU_KV_CACHE_PRECISION=u8 vllm serve /path/to/model
