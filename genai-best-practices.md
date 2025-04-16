@@ -28,6 +28,8 @@ See this [installation
 guide](https://github.com/helena-intel/optimum-intel/wiki/OpenVINO-Integration-Installation-Guide) for step by step
 instructions and tips.
 
+Optimum is only used for exporting models. It is not needed for running inference.
+
 ## INT4 weight quantization
 
 The NNCF team has created recommended quantization configs for popular models which you can see here
@@ -73,3 +75,8 @@ optimum-cli export openvino -m meta-llama/Llama-2-7b-chat-hf --weight-format int
 ```
 
 Use `optimum-cli export openvino --help` to see all options.
+
+## Known issues
+
+- With OpenVINO 2025.1 (and earlier), there is an issue when running inference on per-channel quantized INT4 models (exported with `optimum-cli export openvino --group-size -1`) on Meteor Lake GPU. The model generates nonsense. This issue is fixed in [nightly](#nightly)
+- On GPU, first inference is expected to be different from subsequent inferences. If first inference is worse than second inference, please report an [issue](https://github.com/openvinotoolkit/openvino/issues). To prevent this variability, it can be useful to add a warmup inference: `pipe.generate("hello", max_new_tokens=1)`.
