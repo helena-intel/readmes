@@ -25,13 +25,15 @@ python -m pip install "optimum-intel[openvino]"@git+https://github.com/huggingfa
 
 ## Convert the model to OpenVINO. 
 
+For NPU, it is important to export with "NPU friendly settings". These are: symmetric INT4 quantization (`--weight-format int4 --sym`) and for models larger than >4B channel-wise quantization (`--group-size -1`). For models smaller than <4B channel-wise quantization is not as important, but it does speed up inference and has a lower memory footprint. `--awq` is a setting to improve model output quality. It is not related to NPU and can be omitted.
+
 In this example we use the model meta-llama/Llama-3.2-1B-Instruct . To use another model, replace that with the model_id on https://huggingface.co 
 
 ```
 optimum-cli export openvino --sym --weight-format int4 --awq --dataset wikitext2 -m meta-llama/Llama-3.2-1B-Instruct Llama-3.2-1B-Instruct-ov-int4-sym
 ```
 
-To export a model with more than 4B parameters, use `--group-size -1`:
+To export a model with more than 4B parameters, use channel-wise quantization with `--group-size -1`:
 
 ```
 optimum-cli export openvino --sym --weight-format int4 --group-size -1 --awq --dataset wikitext2 -m meta-llama/Llama-3.1-8B-Instruct meta-llama/Llama-3.1-8B-Instruct-ov-int4-sym
@@ -62,9 +64,9 @@ The first time you run this it may take quite some time to compile the model to 
 ### Tips
 
 - Edit the script to change the system prompt to tweak model outputs
-- In OpenVINO 2024.6, only greedy search is supported on NPU. Do not change `do_sample=False` in the script. Setting `temperature` and `top_p` has no effect. In OpenVINO 2025.0 sample search will be supported on NPU too.
+- In OpenVINO 2024.6, only greedy search is supported on NPU. Do not change `do_sample=False` in the script if you use 2024.6. Setting `temperature` and `top_p` has no effect. From OpenVINO 2025.0 sample search is supported on NPU too.
 - By default the NPU pipeline supports an input size of up-to 1024 tokens. To increase that limit, for example to 2048, add `{"MAX_PROMPT_LEN": 2048}` to
-`pipeline_config`
+`pipeline_config`. **Currently inputs up to about 4000 tokens are supported. Longer input sizes will be supported later this year**
 - To speed up inference at the cost of slower model loading/compilation time, add `{"GENERATE_HINT": "BEST_PERF" }` to `pipeline_config`
 - The llm_chat.py script works with chat models. These models usually have for example -instruct or -chat in their name. For non-chat models, or if you get an error about chat templates, try https://raw.githubusercontent.com/helena-intel/snippets/refs/heads/main/llm_chat/python/llm_test.py instead. Do not expect chat quality from this - but it does allow you to test the model.
 
