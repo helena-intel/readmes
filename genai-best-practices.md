@@ -18,7 +18,7 @@ Install optimum-intel or upgrade to the latest version with:
 pip install --upgrade --upgrade-strategy eager optimum-intel[openvino]
 ```
 
-It is also possible to install from source:
+To get the version with the latest bugfixes and improvements, install optimum-intel from source with this command (this requires that [Git](https://git-scm.com/downloads) is installed):
 
 ```sh
 pip install --upgrade --upgrade-strategy eager "optimum-intel[openvino]"@git+https://github.com/huggingface/optimum-intel.git
@@ -36,7 +36,7 @@ The NNCF team has created recommended quantization configs for popular models wh
 https://github.com/huggingface/optimum-intel/blob/main/optimum/intel/openvino/configuration.py#L44 . If you use
 `optimum-cli` with `--weight-format int4` and no other weight compression options, this default config is applied. The
 configs have been found to have a good balance of accuracy and performance. That doesn't mean they are the best for all
-use cases, but they are a good starting point. Note that as mentioned above, for NPU some modifications are needed.
+use cases, but they are a good starting point. Note that for NPU some modifications are needed (see the NPU section below).
 
 This documentation page explains the parameters to use for INT4 weight compression: https://docs.openvino.ai/2025/openvino-workflow/model-optimization-guide/weight-compression/4-bit-weight-quantization.html
 It is a generic page about weight quantization options, `optimum-cli export openvino --help` shows the exact options to use with `optimum-cli`.
@@ -54,13 +54,11 @@ pip install --pre --upgrade openvino-genai openvino openvino-tokenizers --extra-
 
 ## NPU
 
-For NPU, please follow [this
-guide](https://github.com/helena-intel/openvino/blob/patch-2/docs/articles_en/learn-openvino/llm_inference_guide/genai-guide-npu.rst)
-for best practices. Most importantly:
+For NPU, please refer to the [GenAI NPU documentation](https://docs.openvino.ai/2025/openvino-workflow-generative/inference-with-genai/inference-with-genai-on-npu.html). Most importantly:
 - Make sure that the NPU driver is updated ([Windows](https://www.intel.com/content/www/us/en/download/794734/intel-npu-driver-windows.html), [Linux](https://github.com/intel/linux-npu-driver/releases))
 - Use symmetric INT4 quantization (`--weight-format int4 --sym`) to export the model
   - for models > 4GB, use channel-wise quantization: `--group-size -1`. Group-size quantization may work, but model loading time will be very slow.
-  - for smaller models start with `--group-size 128`. Channel-wise quantization (`--group-size -1`) is also supported for models with at least 1B parameters. 
+  - for smaller models, both channel-wise (`--group-size -1`) and group-wise (`--group-size 128`) quantization is supported. Channel-wise quantization generally results in faster inference, faster model loading time, and lower memory use, so it is a good method to start with. Try group-wise quantization if accuracy with channel-wise quantization is not acceptable (for accuracy also see the note about `--awq` above). 
 - Use OpenVINO GenAI 2025.0 or later.
 - Use model caching: set `{"CACHE_DIR": "model_cache"}` in `pipeline_config` and load the model with  `pipe = ov_genai.LLMPipeline(model_path, "NPU", **pipeline_config)`
 - NPU pipeline_config options:
