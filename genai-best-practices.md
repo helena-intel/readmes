@@ -76,5 +76,6 @@ Use `optimum-cli export openvino --help` to see all options.
 
 ## Known issues
 
-- With OpenVINO 2025.1 (and earlier), there is an issue when running inference on per-channel quantized INT4 models (exported with `optimum-cli export openvino --group-size -1`) on Meteor Lake GPU. The model generates nonsense. This issue is fixed in [nightly](#nightly)
+- With OpenVINO GenAI 2025.1 and 2025.2 system prompts are ignored on CPU and GPU. This is fixed in [nightly](#nightly). For chat inference with a system prompt with 2025.1 or 2025.2, see the [llm_chat_manual.py](https://github.com/helena-intel/snippets/blob/main/llm_chat/python/llm_chat_manual.py) chat sample.
+- With OpenVINO 2025.1 (and earlier), there is an issue when running inference on per-channel quantized INT4 models (exported with `optimum-cli export openvino --group-size -1`) on Meteor Lake GPU. The model generates nonsense. This issue is fixed in 2025.2
 - On GPU, first inference is expected to be different from subsequent inferences. If first inference is worse than second inference, please report an [issue](https://github.com/openvinotoolkit/openvino/issues). To prevent this variability, it can be useful to add a warmup inference: `pipe.generate("hello", max_new_tokens=1)`.
