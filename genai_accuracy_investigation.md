@@ -23,7 +23,7 @@ For GPU and NPU, make sure that the latest drivers are installed.
 Try with the latest OpenVINO GenAI release, and with the latest nightly version:
 
 ```
-pip install --pre -U openvino-genai --extra-index-url https://storage.openvinotoolkit.org/simple/wheels/nightly          
+pip install --pre -U openvino-genai openvino openvino-tokenizers --extra-index-url https://storage.openvinotoolkit.org/simple/wheels/nightly          
 ```
 
 ## OpenVINO model compilation properties
