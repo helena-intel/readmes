@@ -1,7 +1,9 @@
 # OpenVINO LLM accuracy investigation suggestions
 
 This document provides some tips for investigating accuracy issues with LLMs with OpenVINO on AI PC. Some of these options may improve accuracy, others may help
-pinpoint where the issue is. I am not necessarily recommending all these steps for all issues; it is a list of suggestions to consider.
+pinpoint where the issue is. I am not recommending all these steps for all issues; it is a list of suggestions to consider.
+
+See the [GenAI best practices] README for general recommendations.
 
 ## Check on CPU
 
@@ -52,6 +54,16 @@ a workaround is to do a warmup inference: `pipe.generate("hello", max_new_tokens
 
 ## Model export
 
+### Download a "known good" model
+
+LLMWare has uploaded several [NPU friendly OpenVINO models](https://huggingface.co/llmware/models?search=ov-npu) to the Hugging Face hub. 
+To download a model from the hub:
+
+```
+pip install huggingface-hub[cli]
+huggingface-cli download model_id --local-dir local_model_dir
+```
+
 ### Model export versions
 
 If a model has been exported a while ago, it is possible that there was a known issue that has since been fixed. [modelinfo.py](https://github.com/helena-intel/snippets/blob/main/model_info/modelinfo.py
@@ -62,7 +74,7 @@ For example:
 curl -s https://raw.githubusercontent.com/helena-intel/snippets/refs/heads/main/model_info/modelinfo.py | python - phi-4-mini-instruct-ov-int4
 ```
 
-If the model has been exported with older versions of optimum-intel/OpenVINO/NNCF, it can be worth trying to install optimum-intel from source with all the latest dependencies, and export the model again
+If the model has been exported with older versions of optimum-intel/OpenVINO/NNCF, it can be worth trying to install optimum-intel from source with all the latest dependencies, and export the model again with `optimum-cli`.
 
 ```
 python -m pip install --upgrade --upgrade-strategy eager "optimum-intel[openvino]"@git+https://github.com/huggingface/optimum-intel.git
