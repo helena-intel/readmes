@@ -44,6 +44,11 @@ The following settings can impact accuracy. They can be changed for CPU and GPU.
 - `DYNAMIC_QUANTIZATION_GROUP_SIZE`. Dynamic quantization is enabled by default on some devices. Setting `DYNAMIC_QUANTIZATION_GROUP_SIZE` to `0` disables dynamic quantization.
 - `KV_CACHE_PRECISION`. If this is set to int8, setting it to `f16` may improve accuracy. On CPU, an advanced option is to set `KEY_CACHE_PRECISION`, `KEY_CACHE_GROUP_SIZE`, `VALUE_CACHE_PRECISION` and `VALUE_CACHE_GROUP_SIZE` individually.
 
+## First inference
+
+For GPU and NPU, it is expected that first inference can be different. It should not be worse than second inference (this is considered a bug),
+but his can happen, so it is useful to check if the accuracy issue occurs only on first inference, or also on subsequent inferences. If the issue is with first inference only,
+a workaround is to do a warmup inference: `pipe.generate("hello", max_new_tokens=1)`.
 
 ## Model export
 
