@@ -99,6 +99,12 @@ For GPU and CPU:
   ```
   optimum-cli export openvino --weight-format int4 --group-size 32 --ratio 0.8 --awq --dataset wikitext2 --scale-estimation
   ```
+  
+## Optimum Intel inference
+
+To determine whether the issue is with the model, or with OpenVINO GenAI, try if inference with Optimum Intel works (on CPU and GPU).
+See [llm_chat_optimum.py](https://github.com/helena-intel/snippets/blob/main/llm_chat/python/llm_chat_optimum.py).
+
 
 ## Generation parameters and code
 
