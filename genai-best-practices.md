@@ -61,10 +61,9 @@ For NPU, please refer to the [GenAI NPU documentation](https://docs.openvino.ai/
 - Use symmetric INT4 quantization (`--weight-format int4 --sym`) to export the model
   - for models > 4GB, use channel-wise quantization: `--group-size -1`. Group-size quantization may work, but model loading time will be very slow.
   - for smaller models, both channel-wise (`--group-size -1`) and group-wise (`--group-size 128`) quantization is supported. Channel-wise quantization generally results in faster inference, faster model loading time, and lower memory use, so it is a good method to start with. Try group-wise quantization if accuracy with channel-wise quantization is not acceptable (for accuracy also see the note about `--awq` above). 
-- Use OpenVINO GenAI 2025.0 or later (in general, the latest OpenVINO GenAI version is recommended).
-- Use model caching: set `{"CACHE_DIR": "model_cache"}` in `pipeline_config` and load the model with  `pipe = ov_genai.LLMPipeline(model_path, "NPU", **pipeline_config)`
+- Use OpenVINO GenAI 2025.1 or later (in general, the latest OpenVINO GenAI version is recommended).
+- Use model caching: set `{"CACHE_DIR": "model_cache"}` in `pipeline_config` and load the model with  `pipe = ov_genai.LLMPipeline(model_path, "NPU", **pipeline_config)` (NOTE: see known issues section)
 - NPU pipeline_config options:
-  - `{"GENERATE_HINT": "BEST_PERF"}` or `{"GENERATE_HINT": "FAST_COMPILE"}` for optimizing for inference performance or model loading/compilation time.
   - `{"MAX_PROMPT_LEN": 2048, "MIN_RESPONSE_LEN": 512}`. `MAX_PROMPT_LEN` is 1024 by default, `MIN_RESPONSE_LEN` 128. If your input size is larger than 1024, or you expect more than 128 tokens in the output, set these options. `MIN_RESPONSE_LEN` will not cause more tokens to be generated than specified with `config.max_new_tokens`, and generating is still stopped if an EOS token is encountered.
 
 
@@ -78,9 +77,15 @@ Use `optimum-cli export openvino --help` to see all options.
 
 ## Known issues
 
-- With OpenVINO GenAI 2025.1 and 2025.2 system prompts are ignored on CPU and GPU when using .start_chat(). This is fixed in [nightly](#nightly), but there is still a small issue with system prompts remaining. For manual chat inference with a system prompt, see the [llm_chat_manual.py](https://github.com/helena-intel/snippets/blob/main/llm_chat/python/llm_chat_manual.py) chat sample.
-- With OpenVINO 2025.1 (and earlier), there is an issue when running inference on per-channel quantized INT4 models (exported with `optimum-cli export openvino --group-size -1`) on Meteor Lake GPU. The model generates nonsense. This issue is fixed in 2025.2
+### 2025.3
+
+- For NPU, CACHE_DIR does not speed up model loading in 2025.3. This is fixed in nightly (see above). For 2025.3, it is an option to use NPUW_CACHE_DIR instead of CACHE_DIR (this works only for NPU and does not result in as much speedup as CACHE_DIR).
 - On GPU, first inference is expected to be different from subsequent inferences. If first inference is worse than second inference, please report an [issue](https://github.com/openvinotoolkit/openvino/issues). To prevent this variability, it can be useful to add a warmup inference: `pipe.generate("hello", max_new_tokens=1)`.
+
+### Earlier versions
+
+- With OpenVINO GenAI 2025.1 and 2025.2 system prompts are ignored on CPU and GPU when using .start_chat(). This is fixed in 2025.3 
+- With OpenVINO 2025.1 (and earlier), there is an issue when running inference on per-channel quantized INT4 models (exported with `optimum-cli export openvino --group-size -1`) on Meteor Lake GPU. The model generates nonsense. This issue is fixed in 2025.2
 
 ## OpenVINO models on Hugging Face hub
 
