@@ -1,6 +1,9 @@
 This guide walks you through creating a virtual environment in Python. There are many tools that can also do this, but in this guide
 we use the built-in `venv` module in Python.
 
+> [!NOTE]
+> I now recommend `uv` instead, which enables faster pip install and easy switching between Python versions. See [uv_pip.md](https://github.com/helena-intel/readmes/blob/main/uv_pip.md)
+
 # Windows
 
 ## Prerequisites
