@@ -66,7 +66,6 @@ Generally, you can just use `uv pip` instead of `pip`, but there are some subtle
 in `extra-index-url` with the wrong version, and correct version exists on PyPI. In that case it usually tells you how to solve it. In
 this case: `uv pip install -r requirements.txt  --index-strategy unsafe-best-match`
 - `uv pip install --upgrade` upgrades dependencies too (similar to `pip install --upgrade --upgrade-strategy eager`). To upgrade a package, for example `openvino`, without dependencies, use `uv pip install --upgrade-package openvino openvino` or `uv pip install --upgrade openvino --no-deps`. ([GitHub issue](https://github.com/astral-sh/uv/issues/4779))
-- as a flipside to the above: just `uv pip install package` does not necessarily install the latest version of a package.
 
 #### Gotcha's
 
